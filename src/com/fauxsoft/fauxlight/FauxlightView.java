@@ -73,36 +73,57 @@ public class FauxlightView extends View {
 	private final Toast min = Toast.makeText(getContext(),
 			R.string.min_brightness, 2);
 
+	private boolean adjustScreenBrightness(float brightness) {
+		WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+		if (lp != null) {
+			lp.screenBrightness += brightness;
+			if (lp.screenBrightness > 1) {
+				lp.screenBrightness = 1;
+				max.show();
+			} else if (lp.screenBrightness <= 0.1f) {
+				lp.screenBrightness = 0.1f;
+				min.show();
+			} else {
+				min.cancel();
+				max.cancel();
+			}
+
+			Log.d(FauxlightActivity.TAG, "brightness: " + lp.screenBrightness);
+			activity.getWindow().setAttributes(lp);
+			return true;
+		} else {
+			Log.d(FauxlightActivity.TAG, "no layout params");
+			return false;
+		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		Log.d(FauxlightActivity.TAG, event.toString());
+		if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER) {
+			setBackgroundColor(0xffffffff);
+			return true;
+		}
+
+		switch (event.getKeyCode()) {
+		case KeyEvent.KEYCODE_DPAD_DOWN:
+		case KeyEvent.KEYCODE_DPAD_LEFT:
+			return adjustScreenBrightness(-0.2f);
+		case KeyEvent.KEYCODE_DPAD_UP:
+		case KeyEvent.KEYCODE_DPAD_RIGHT:
+			return adjustScreenBrightness(0.2f);
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
 	@Override
 	public boolean onTrackballEvent(MotionEvent event) {
 		Log.d(FauxlightActivity.TAG, event.toString());
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			setBackgroundColor(0xffffffff);
 			return true;
-		}
-		if (event.getAction() == MotionEvent.ACTION_MOVE) {
-			WindowManager.LayoutParams lp = activity.getWindow()
-					.getAttributes();
-			if (lp != null) {
-				lp.screenBrightness += event.getX() / 10 + event.getY() / 10;
-				if (lp.screenBrightness > 1) {
-					lp.screenBrightness = 1;
-					max.show();
-				} else if (lp.screenBrightness <= 0.1f) {
-					lp.screenBrightness = 0.1f;
-					min.show();
-				} else {
-					min.cancel();
-					max.cancel();
-				}
-
-				Log.d(FauxlightActivity.TAG, "brightness: "
-						+ lp.screenBrightness);
-				activity.getWindow().setAttributes(lp);
-				return true;
-			} else {
-				Log.d(FauxlightActivity.TAG, "no layout params");
-			}
+		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+			return adjustScreenBrightness(event.getX() / 10 + event.getY() / 10);
 		}
 		return super.onTrackballEvent(event);
 	}
