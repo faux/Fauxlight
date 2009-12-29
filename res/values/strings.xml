@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, FauxlightActivity!</string>
+    <string name="app_name">Fauxlight</string>
+    <string name="max_brightness">Max brightness</string>
+    <string name="min_brightness">Min brightness</string>
+<color name="white">#fff</color>
+</resources>
