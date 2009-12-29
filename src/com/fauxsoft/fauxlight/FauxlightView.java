@@ -75,24 +75,34 @@ public class FauxlightView extends View {
 
 	@Override
 	public boolean onTrackballEvent(MotionEvent event) {
-		WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
-		if (lp != null) {
-			lp.screenBrightness += event.getX() / 10 + event.getY() / 10;
-			if (lp.screenBrightness > 1) {
-				lp.screenBrightness = 1;
-				max.show();
-			} else if (lp.screenBrightness <= 0.1f) {
-				lp.screenBrightness = 0.1f;
-				min.show();
-			} else {
-				min.cancel();
-				max.cancel();
-			}
+		Log.d(FauxlightActivity.TAG, event.toString());
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			setBackgroundColor(0xffffffff);
+			return true;
+		}
+		if (event.getAction() == MotionEvent.ACTION_MOVE) {
+			WindowManager.LayoutParams lp = activity.getWindow()
+					.getAttributes();
+			if (lp != null) {
+				lp.screenBrightness += event.getX() / 10 + event.getY() / 10;
+				if (lp.screenBrightness > 1) {
+					lp.screenBrightness = 1;
+					max.show();
+				} else if (lp.screenBrightness <= 0.1f) {
+					lp.screenBrightness = 0.1f;
+					min.show();
+				} else {
+					min.cancel();
+					max.cancel();
+				}
 
-			Log.d(FauxlightActivity.TAG, "brightness: " + lp.screenBrightness);
-			activity.getWindow().setAttributes(lp);
-		} else {
-			Log.d(FauxlightActivity.TAG, "no layout params");
+				Log.d(FauxlightActivity.TAG, "brightness: "
+						+ lp.screenBrightness);
+				activity.getWindow().setAttributes(lp);
+				return true;
+			} else {
+				Log.d(FauxlightActivity.TAG, "no layout params");
+			}
 		}
 		return super.onTrackballEvent(event);
 	}

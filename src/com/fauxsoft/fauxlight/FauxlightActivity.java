@@ -1,6 +1,7 @@
 package com.fauxsoft.fauxlight;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -17,7 +18,7 @@ public class FauxlightActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFeatureInt(Window.FEATURE_NO_TITLE, 1);
 		WindowManager.LayoutParams lp = getWindow().getAttributes();
-		lp.screenBrightness = 0.1f;
+		lp.screenBrightness = 1f;
 		lp.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
 		lp.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 		view.setActivity(this);
